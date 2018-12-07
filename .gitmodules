@@ -1,0 +1,6 @@
+[submodule "Assets/Jstylezzz/stylobuild"]
+	path = Assets/Jstylezzz/stylobuild
+	url = git@github.com:jstylezzz/stylobuild.git
+[submodule "Assets/Jstylezzz/stylocore"]
+	path = Assets/Jstylezzz/stylocore
+	url = git@github.com:jstylezzz/stylocore.git
