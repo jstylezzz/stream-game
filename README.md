@@ -12,3 +12,7 @@ At the moment the game and its concept are not completed yet. The readme will be
 ### Stream?
 Yes, development of this game will be streamed on Twitch.
 * [Jstylezzz's channel on Twitch](https://twitch.tv/jstylezzz)
+
+
+### Credits
+* RPG Tileset SilverIV (Ivan Voirol): https://opengameart.org/content/basic-map-32x32-by-silver-iv
