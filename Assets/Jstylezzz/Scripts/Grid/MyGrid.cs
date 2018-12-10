@@ -53,7 +53,7 @@ namespace Jstylezzz.Grid
 			Camera mainCam = MyGameState.Instance.CameraOperator.MainCamera;
 			Vector3 worldPosition = mainCam.ScreenToWorldPoint(mousePos);
 			Vector2Int gridIndex = new Vector2Int(Mathf.RoundToInt(worldPosition.x / GridTileSize), Mathf.RoundToInt(worldPosition.y / GridTileSize));
-			Debug.Log(gridIndex);
+
 			if((gridIndex.x > 0 && gridIndex.x < _gridSize) && (gridIndex.y > 0 && gridIndex.y < _gridSize))
 			{
 				return _gridTiles[gridIndex.x, gridIndex.y];
