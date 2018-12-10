@@ -27,5 +27,14 @@ namespace Jstylezzz.Grid
 			_tileView = view;
 			_tileView.transform.localPosition = new Vector3(_positionInGrid.x * MyGrid.GridTileSize, _positionInGrid.y * MyGrid.GridTileSize, 0);
 		}
+
+		public void UnassignView()
+		{
+			if(_tileView == null)
+				return;
+
+			Object.Destroy(_tileView.gameObject);
+			_tileView = null;
+		}
 	}
 }

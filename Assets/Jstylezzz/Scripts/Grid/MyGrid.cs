@@ -5,6 +5,7 @@
 * 
 */
 
+using Jstylezzz.Manager;
 using System.Collections;
 using UnityEngine;
 
@@ -41,9 +42,23 @@ namespace Jstylezzz.Grid
 					GameObject g = Instantiate(_prefabView);
 					_gridTiles[x, y] = new MyGridTile(new Vector2Int(x, y));
 					_gridTiles[x, y].AssignView(g.GetComponent<MyGridTileView>());
+					g.name = $"Tile[{x}, {y}]";
 				}
 			}
 			yield return null;
+		}
+
+		public MyGridTile GridTileFromMousePosition(Vector3 mousePos)
+		{
+			Camera mainCam = MyGameState.Instance.CameraOperator.MainCamera;
+			Vector3 worldPosition = mainCam.ScreenToWorldPoint(mousePos);
+			Vector2Int gridIndex = new Vector2Int(Mathf.RoundToInt(worldPosition.x / GridTileSize), Mathf.RoundToInt(worldPosition.y / GridTileSize));
+			Debug.Log(gridIndex);
+			if((gridIndex.x > 0 && gridIndex.x < _gridSize) && (gridIndex.y > 0 && gridIndex.y < _gridSize))
+			{
+				return _gridTiles[gridIndex.x, gridIndex.y];
+			}
+			return null;
 		}
 	}
 }
