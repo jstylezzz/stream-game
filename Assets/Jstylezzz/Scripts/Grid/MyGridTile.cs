@@ -14,6 +14,9 @@ namespace Jstylezzz.Grid
 	/// </summary>
 	public class MyGridTile
 	{
+		public Vector2Int GridPosition { get { return _positionInGrid; } }
+		public bool HasView { get { return _tileView != null; } }
+
 		private Vector2Int _positionInGrid;
 		private MyGridTileView _tileView;
 

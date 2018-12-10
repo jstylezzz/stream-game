@@ -6,6 +6,7 @@
 */
 
 using Jstylezzz.Cam;
+using Jstylezzz.Grid;
 using StyloCore;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace Jstylezzz.Manager
 	public class MyGameState : MySingleton<MyGameState>
 	{
 		public MyCameraOperator CameraOperator { get; private set; }
+		public MyGrid ActiveGrid { get; private set; }
 
 		public void RegisterCameraOperator(MyCameraOperator oprt)
 		{
@@ -31,6 +33,21 @@ namespace Jstylezzz.Manager
 		public void UnregisterCameraOperator()
 		{
 			CameraOperator = null;
+		}
+
+		public void RegisterActiveGrid(MyGrid g)
+		{
+			if(ActiveGrid != null)
+			{
+				Debug.LogWarning("[MyGameState]: Active grid already registered! Be sure to unregister before registering one again.");
+				return;
+			}
+			ActiveGrid = g;
+		}
+
+		public void UnregisterActiveGrid()
+		{
+			ActiveGrid = null;
 		}
 	}
 }

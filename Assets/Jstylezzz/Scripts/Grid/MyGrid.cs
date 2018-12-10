@@ -28,6 +28,7 @@ namespace Jstylezzz.Grid
 
 		private void Awake()
 		{
+			MyGameState.Instance.RegisterActiveGrid(this);
 			StartCoroutine(GenerateGrid());
 		}
 
@@ -39,10 +40,7 @@ namespace Jstylezzz.Grid
 			{
 				for(int x = 0; x < _gridSize; x++)
 				{
-					GameObject g = Instantiate(_prefabView);
 					_gridTiles[x, y] = new MyGridTile(new Vector2Int(x, y));
-					_gridTiles[x, y].AssignView(g.GetComponent<MyGridTileView>());
-					g.name = $"Tile[{x}, {y}]";
 				}
 			}
 			yield return null;
