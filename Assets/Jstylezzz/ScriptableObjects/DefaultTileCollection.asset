@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Name: DefaultTileCollection
   m_EditorClassIdentifier: 
   _tiles:
-  - {fileID: 1614378175545266, guid: cb7b45521bc042542bd1dcff78e1ebbf, type: 2}
+  - {fileID: 114672080069395318, guid: cb7b45521bc042542bd1dcff78e1ebbf, type: 2}

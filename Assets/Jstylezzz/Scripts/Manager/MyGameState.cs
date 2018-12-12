@@ -7,6 +7,7 @@
 
 using Jstylezzz.Cam;
 using Jstylezzz.Grid;
+using Jstylezzz.LevelEditor;
 using StyloCore;
 using UnityEngine;
 
@@ -17,8 +18,20 @@ namespace Jstylezzz.Manager
 	/// </summary>
 	public class MyGameState : MySingleton<MyGameState>
 	{
+		#region Manager Instances
+
 		public MyCameraOperator CameraOperator { get; private set; }
+		public MyLevelEditorManager LevelEditorManager { get; private set; }
+
+		#endregion
+
+		#region World Instances
+
 		public MyGrid ActiveGrid { get; private set; }
+
+		#endregion
+
+		#region Register Methods
 
 		public void RegisterCameraOperator(MyCameraOperator oprt)
 		{
@@ -28,11 +41,6 @@ namespace Jstylezzz.Manager
 				return;
 			}
 			CameraOperator = oprt;
-		}
-
-		public void UnregisterCameraOperator()
-		{
-			CameraOperator = null;
 		}
 
 		public void RegisterActiveGrid(MyGrid g)
@@ -45,9 +53,35 @@ namespace Jstylezzz.Manager
 			ActiveGrid = g;
 		}
 
+		public void RegisterLevelManager(MyLevelEditorManager levelEditorManager)
+		{
+			if(LevelEditorManager != null)
+			{
+				Debug.LogWarning("[MyGameState]: Level editor manager already registered! Be sure to unregister before registering one again.");
+				return;
+			}
+			LevelEditorManager = levelEditorManager;
+		}
+
+		#endregion
+
+		#region Unregister Methods
+
+		public void UnregisterCameraOperator()
+		{
+			CameraOperator = null;
+		}
+
 		public void UnregisterActiveGrid()
 		{
 			ActiveGrid = null;
 		}
+
+		public void UnregisterLevelEditorManager()
+		{
+			LevelEditorManager = null;
+		}
+
+		#endregion
 	}
 }

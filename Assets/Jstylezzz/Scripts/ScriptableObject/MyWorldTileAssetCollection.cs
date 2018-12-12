@@ -5,6 +5,7 @@
 * 
 */
 
+using Jstylezzz.Grid;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,9 +18,9 @@ namespace Jstylezzz.AssetCollections
 	public class MyWorldTileAssetCollection : ScriptableObject
 	{
 		[SerializeField]
-		private GameObject[] _tiles;
+		private MyGridTileView[] _tiles;
 
-		public GameObject[] GetAllTiles()
+		public MyGridTileView[] GetAllTiles()
 		{
 			return _tiles;
 		}

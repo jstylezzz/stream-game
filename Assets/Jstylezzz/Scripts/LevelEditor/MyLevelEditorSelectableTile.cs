@@ -5,6 +5,8 @@
 * 
 */
 
+using Jstylezzz.Grid;
+using Jstylezzz.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,9 +17,18 @@ namespace Jstylezzz.LevelEditor
 	/// </summary>
 	public class MyLevelEditorSelectableTile : MonoBehaviour
 	{
+		private MyGridTileView _tileView;
+
+		public void Initialize(MyGridTileView tile, Transform uiParent)
+		{
+			_tileView = tile;
+			transform.SetParent(uiParent, false);
+			GetComponent<Image>().sprite = tile.TileSprite;
+		}
+
 		public void OnClick()
 		{
-			FindObjectOfType<MyLevelEditorManager>().SetActivePrefab(GetComponent<Image>().sprite);
+			MyGameState.Instance.LevelEditorManager.SetActivePrefab(_tileView);
 		}
 	}
 }

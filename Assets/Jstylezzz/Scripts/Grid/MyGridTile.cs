@@ -19,15 +19,18 @@ namespace Jstylezzz.Grid
 
 		private Vector2Int _positionInGrid;
 		private MyGridTileView _tileView;
+		private MyGrid _grid;
 
-		public MyGridTile(Vector2Int positionInGrid)
+		public MyGridTile(MyGrid grid, Vector2Int positionInGrid)
 		{
+			_grid = grid;
 			_positionInGrid = positionInGrid;
 		}
 
 		public void AssignView(MyGridTileView view)
 		{
 			_tileView = view;
+			_tileView.transform.SetParent(_grid.transform, false);
 			_tileView.transform.localPosition = new Vector3(_positionInGrid.x * MyGrid.GridTileSize, _positionInGrid.y * MyGrid.GridTileSize, 0);
 		}
 

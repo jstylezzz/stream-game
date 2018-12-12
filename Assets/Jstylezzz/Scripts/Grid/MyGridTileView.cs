@@ -15,6 +15,9 @@ namespace Jstylezzz.Grid
 	[RequireComponent(typeof(SpriteRenderer))]
 	public class MyGridTileView : MonoBehaviour
 	{
+		public Sprite TileSprite { get { return _spriteRenderer.sprite; } }
 
+		[SerializeField]
+		private SpriteRenderer _spriteRenderer;
 	}
 }

@@ -27,26 +27,31 @@ namespace Jstylezzz.LevelEditor
 		[SerializeField]
 		private GameObject _previewPrefab; //UI element
 
-		private Sprite _activeSpritePrefab; //Actual sprite to place in world
+		private MyGridTileView _activeTileViewPrefab; //Actual sprite to place in world
 
 		private void Awake()
 		{
-			foreach(GameObject g in _activeWorldTileCollection.GetAllTiles())
+			MyGameState.Instance.RegisterLevelManager(this);
+			foreach(MyGridTileView g in _activeWorldTileCollection.GetAllTiles())
 			{
 				GameObject gO = Instantiate(_previewPrefab);
-				gO.GetComponent<Image>().sprite = g.GetComponent<SpriteRenderer>().sprite;
-				gO.transform.SetParent(_tileSelectionContent, false);
+				gO.GetComponent<MyLevelEditorSelectableTile>().Initialize(g, _tileSelectionContent);
 			}
 		}
 
-		public void SetActivePrefab(Sprite active)
+		private void OnDestroy()
 		{
-			_activeSpritePrefab = active;
+			MyGameState.Instance.UnregisterLevelEditorManager();
+		}
+
+		public void SetActivePrefab(MyGridTileView active)
+		{
+			_activeTileViewPrefab = active;
 		}
 
 		public void Update()
 		{
-			if(_activeSpritePrefab && Input.GetMouseButtonDown(0))
+			if(_activeTileViewPrefab && Input.GetMouseButtonDown(0))
 			{
 				MyGridTile tile = MyGameState.Instance.ActiveGrid.GridTileFromMousePosition(Input.mousePosition);
 				if(tile != null)
@@ -57,7 +62,7 @@ namespace Jstylezzz.LevelEditor
 					}
 
 					GameObject g = new GameObject($"Tile[{tile.GridPosition.x},{tile.GridPosition.y}]");
-					g.AddComponent<SpriteRenderer>().sprite = _activeSpritePrefab;
+					g.AddComponent<SpriteRenderer>().sprite = _activeTileViewPrefab.TileSprite;
 					MyGridTileView view = g.AddComponent<MyGridTileView>();
 					tile.AssignView(view);
 				}
