@@ -18,6 +18,14 @@ namespace Jstylezzz.Grid
 	{
 		public const float GridTileSize = 0.32f;
 
+		public int GridSize
+		{
+			get
+			{
+				return _gridSize;
+			}
+		}
+
 		[SerializeField]
 		private int _gridSize;
 
@@ -79,6 +87,11 @@ namespace Jstylezzz.Grid
 				return _gridTiles[gridIndex.x, gridIndex.y];
 			}
 			return null;
+		}
+
+		public MyGridTile GridTileFromGridPos(Vector2Int pos)
+		{
+			return _gridTiles[pos.x, pos.y];
 		}
 	}
 }

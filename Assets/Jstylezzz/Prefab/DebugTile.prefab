@@ -53,6 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 212559107775000290}
+  _prefabName: DebugPrefabTileYay
 --- !u!212 &212559107775000290
 SpriteRenderer:
   m_ObjectHideFlags: 1

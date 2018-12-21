@@ -8,6 +8,8 @@
 using Jstylezzz.Cam;
 using Jstylezzz.Grid;
 using Jstylezzz.LevelEditor;
+using Jstylezzz.Storage;
+using Jstylezzz.Storage.Modules;
 using StyloCore;
 using UnityEngine;
 
@@ -18,6 +20,12 @@ namespace Jstylezzz.Manager
 	/// </summary>
 	public class MyGameState : MySingleton<MyGameState>
 	{
+		#region Properties
+
+		public string ActiveLevelName { get; private set; } = "TestLevel";
+
+		#endregion
+
 		#region Manager Instances
 
 		public MyCameraOperator CameraOperator { get; private set; }
@@ -30,6 +38,15 @@ namespace Jstylezzz.Manager
 		public MyGrid ActiveGrid { get; private set; }
 
 		#endregion
+
+		public MyGameState()
+		{
+			MyStorageManager.AttemptCreateInstance();
+
+			MyStorageManager.Instance.RegisterStorageModule(new MyLevelStorageModule(ActiveLevelName), typeof(MyLevelStorageModule));
+
+			MyStorageManager.Instance.LoadAllModules();
+		}
 
 		#region Register Methods
 
