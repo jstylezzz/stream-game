@@ -24,26 +24,4 @@ namespace Jstylezzz.Grid
 		[SerializeField]
 		private string _prefabName;
 	}
-
-	public static class MyGridTileViewExtensions
-	{
-		public static string[,] GetPrefabNames(this MyGridTileView[,] tiles)
-		{
-			string[,] prefabNames = new string[tiles.GetLength(0), tiles.GetLength(1)];
-			for(int y = 0; y < tiles.GetLength(1); y++)
-			{
-				for(int x = 0; x < tiles.GetLength(0); x++)
-				{
-					if(tiles[x,y] == null)
-					{
-						continue;
-					}
-
-					prefabNames[x, y] = tiles[x, y].PrefabName;
-				}
-			}
-
-			return prefabNames;
-		}
-	}
 }

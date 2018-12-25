@@ -5,21 +5,28 @@
 * 
 */
 
-using StyloCore.Util;
+using StyloCore.Storage;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
-namespace Jstylezzz.Storage.Modules
+namespace Jstylezzz.StorageModules
 {
 	/// <summary>
 	///	This storage module stores player stats.
 	/// </summary>
 	public class MyLevelStorageModule : IMyStorageModule
 	{
+		#region Consts
+
+		private const string LevelFolder = "levels/";
+
+		#endregion
+
 		#region Variables
 
 		private string _levelName;
+		private int _uniformSize;
 
 		#endregion
 
@@ -27,7 +34,7 @@ namespace Jstylezzz.Storage.Modules
 
 		public string ModuleName { get { return "Grid Tile Data"; } }
 
-		public string RelativePath { get { return "levels/"; } }
+		public string RelativePath { get { return LevelFolder + _levelName + "/"; } }
 
 		public string RelativeFilePath { get { return RelativePath + _levelName + "_tileData.stylz"; } }
 
@@ -38,6 +45,7 @@ namespace Jstylezzz.Storage.Modules
 		#region Properties
 
 		public string[,] PrefabNames { get; private set; }
+		public int UniformSize { get; private set; }
 
 		#endregion
 
@@ -48,8 +56,9 @@ namespace Jstylezzz.Storage.Modules
 
 		#region Public Methods
 
-		public void DumpGridData(string[,] prefabNames)
+		public void DumpGridData(int uniformSize, string[,] prefabNames)
 		{
+			UniformSize = uniformSize;
 			PrefabNames = prefabNames;
 		}
 
@@ -65,7 +74,7 @@ namespace Jstylezzz.Storage.Modules
 		public string GetJSON()
 		{
 			
-			return JsonUtility.ToJson(new MyStorableVariables(PrefabNames));
+			return JsonUtility.ToJson(new MyStorableVariables(UniformSize, PrefabNames));
 		}
 
 		public void InitFromJSON(string json)
@@ -77,6 +86,7 @@ namespace Jstylezzz.Storage.Modules
 				if(v == null)
 					v = new MyStorableVariables();
 
+				UniformSize = v.UniformSize;
 				PrefabNames = v.GetJaggedPrefabNames();
 			}
 			catch(Exception e)
@@ -88,10 +98,26 @@ namespace Jstylezzz.Storage.Modules
 
 		#endregion
 
+		#region Public Static Methods
+
+		public static string[] GetPotentialLevels()
+		{
+			string[] levels = Directory.GetDirectories(MyStorageManager.StorageRoot + LevelFolder);
+			for(int i = 0; i < levels.Length; i++)
+			{
+				int lastIdx = levels[i].LastIndexOf('/') + 1;
+				levels[i] = levels[i].Remove(0, lastIdx);
+			}
+			return levels;
+		}
+
+		#endregion
+
 		#region Storable
 
 		private class MyStorableVariables
 		{
+			public int UniformSize;
 			public string[] PrefabNames;
 
 			/// <summary>
@@ -105,8 +131,9 @@ namespace Jstylezzz.Storage.Modules
 			/// <summary>
 			/// Save constructor
 			/// </summary>
-			public MyStorableVariables(string[,] prefabNames)
+			public MyStorableVariables(int uniformSize, string[,] prefabNames)
 			{
+				UniformSize = uniformSize;
 				PrefabNames = JaggedToSingleDimension(prefabNames);
 			}
 
@@ -117,6 +144,11 @@ namespace Jstylezzz.Storage.Modules
 
 			private string[,] SingleToJagged(string[] singleStrings)
 			{
+				if(singleStrings == null)
+				{
+					return new string[0, 0];
+				}
+
 				int uniformSize = Mathf.RoundToInt(Mathf.Sqrt(singleStrings.Length));
 				string[,] jagged = new string[uniformSize, uniformSize];
 
@@ -144,6 +176,11 @@ namespace Jstylezzz.Storage.Modules
 
 			private string[] JaggedToSingleDimension(string[,] jaggedStrings)
 			{
+				if(jaggedStrings == null)
+				{
+					return new string[0];
+				}
+
 				int xLen = jaggedStrings.GetLength(0);
 				int yLen = jaggedStrings.GetLength(1);
 

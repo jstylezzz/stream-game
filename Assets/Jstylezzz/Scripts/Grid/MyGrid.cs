@@ -6,6 +6,7 @@
 */
 
 using Jstylezzz.Manager;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -16,59 +17,75 @@ namespace Jstylezzz.Grid
 	/// </summary>
 	public class MyGrid : MonoBehaviour
 	{
+		#region Consts
+
 		public const float GridTileSize = 0.32f;
 
-		public int GridSize
-		{
-			get
-			{
-				return _gridSize;
-			}
-		}
+		private const int LoadFractions = 2;
 
-		[SerializeField]
-		private int _gridSize;
+		#endregion
 
-		[SerializeField]
-		private GameObject _prefabView;
+		#region Properties
 
-		[SerializeField]
-		private Texture2D _overlaySample;
+		public int GridSize { get; private set; }
+		public MyGridTile[,] Tiles { get; private set; }
+		public bool Initialized { get; private set; }
+
+		#endregion
+
+		#region Editor Variables
 
 		[SerializeField]
 		private SpriteRenderer _overlayRenderer;
 
-		private MyGridTile[,] _gridTiles;
+		#endregion
+
+		#region Variables
+
+		private Action _onloadCallback;
+		private int _loadFractionsComplete = 0;
+
+		#endregion
+
+		#region Lifecycle
 
 		private void Awake()
 		{
 			MyGameState.Instance.RegisterActiveGrid(this);
+			_overlayRenderer.enabled = false;
+		}
+
+		#endregion
+
+		public void Initialize(int uniformSize, Action onloadCallback = null)
+		{
+			if(Initialized)
+			{
+				Deinitialize();
+			}
+
+			GridSize = uniformSize;
+			_onloadCallback = onloadCallback;
+			_loadFractionsComplete = 0;
 			StartCoroutine(GenerateGrid());
 			StartCoroutine(GenerateOverlay());
 		}
 
-		private IEnumerator GenerateGrid()
-		{
-			_gridTiles = new MyGridTile[_gridSize, _gridSize];
+		#region Public Methods
 
-			for(int y = 0; y < _gridSize; y++)
+		public void Deinitialize()
+		{
+			for(int y = 0; y < GridSize; y++)
 			{
-				for(int x = 0; x < _gridSize; x++)
+				for(int x = 0; x < GridSize; x++)
 				{
-					_gridTiles[x, y] = new MyGridTile(this, new Vector2Int(x, y));
+					Tiles[x, y].UnassignView();
 				}
 			}
-			yield return null;
-		}
 
-		private IEnumerator GenerateOverlay()
-		{
-			_overlayRenderer.size = Vector2.one * (GridTileSize * _gridSize);
-			Vector2 bottomLeft = GridTilePositionToLocalWorldPosition(_gridTiles[0, 0]);
-			Vector2 topRight = GridTilePositionToLocalWorldPosition(_gridTiles[_gridSize - 1, _gridSize - 1]);
-			Vector2 center = (bottomLeft + topRight) / 2f;
-			_overlayRenderer.transform.localPosition = center;
-			yield return null;
+			Tiles = null;
+			_overlayRenderer.enabled = false;
+			Initialized = false;
 		}
 
 		public Vector2 GridTilePositionToLocalWorldPosition(MyGridTile tile)
@@ -82,16 +99,60 @@ namespace Jstylezzz.Grid
 			Vector3 worldPosition = mainCam.ScreenToWorldPoint(mousePos) - transform.position;
 			Vector2Int gridIndex = new Vector2Int(Mathf.RoundToInt(worldPosition.x / GridTileSize), Mathf.RoundToInt(worldPosition.y / GridTileSize));
 
-			if((gridIndex.x >= 0 && gridIndex.x < _gridSize) && (gridIndex.y >= 0 && gridIndex.y < _gridSize))
+			if((gridIndex.x >= 0 && gridIndex.x < GridSize) && (gridIndex.y >= 0 && gridIndex.y < GridSize))
 			{
-				return _gridTiles[gridIndex.x, gridIndex.y];
+				return Tiles[gridIndex.x, gridIndex.y];
 			}
 			return null;
 		}
 
 		public MyGridTile GridTileFromGridPos(Vector2Int pos)
 		{
-			return _gridTiles[pos.x, pos.y];
+			return Tiles[pos.x, pos.y];
 		}
+
+		#endregion
+
+		#region Private Methods
+
+		private IEnumerator GenerateGrid()
+		{
+			Tiles = new MyGridTile[GridSize, GridSize];
+
+			for(int y = 0; y < GridSize; y++)
+			{
+				for(int x = 0; x < GridSize; x++)
+				{
+					Tiles[x, y] = new MyGridTile(new Vector2Int(x, y));
+				}
+			}
+			OnLoadFractionComplete();
+			yield return null;
+		}
+
+		private IEnumerator GenerateOverlay()
+		{
+			_overlayRenderer.enabled = true;
+			_overlayRenderer.size = Vector2.one * (GridTileSize * GridSize);
+			Vector2 bottomLeft = GridTilePositionToLocalWorldPosition(Tiles[0, 0]);
+			Vector2 topRight = GridTilePositionToLocalWorldPosition(Tiles[GridSize - 1, GridSize - 1]);
+			Vector2 center = (bottomLeft + topRight) / 2f;
+			_overlayRenderer.transform.localPosition = center;
+			OnLoadFractionComplete();
+			yield return null;
+		}
+
+		private void OnLoadFractionComplete()
+		{
+			_loadFractionsComplete++;
+
+			if(_loadFractionsComplete == LoadFractions)
+			{
+				_onloadCallback?.Invoke();
+				Initialized = true;
+			}
+		}
+
+		#endregion
 	}
 }

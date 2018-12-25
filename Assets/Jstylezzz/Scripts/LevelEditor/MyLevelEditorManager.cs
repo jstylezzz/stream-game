@@ -5,12 +5,8 @@
 * 
 */
 
-using Jstylezzz.AssetCollections;
 using Jstylezzz.Grid;
 using Jstylezzz.Manager;
-using Jstylezzz.Storage;
-using Jstylezzz.Storage.Modules;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Jstylezzz.LevelEditor
@@ -21,15 +17,10 @@ namespace Jstylezzz.LevelEditor
 	public class MyLevelEditorManager : MonoBehaviour
 	{
 		[SerializeField]
-		private MyWorldTileAssetCollection _activeWorldTileCollection;
-
-		[SerializeField]
 		private Transform _tileSelectionContent;
 
 		[SerializeField]
 		private GameObject _previewPrefab; //UI element
-
-		private MyGridTileView[,] _gridTileViews;
 
 		private MyGridTileView _activeTileViewPrefab; //Actual sprite to place in world
 		
@@ -38,13 +29,11 @@ namespace Jstylezzz.LevelEditor
 		{
 			MyGameState.Instance.RegisterLevelManager(this);
 
-			int gridSize = MyGameState.Instance.ActiveGrid.GridSize;
-			_gridTileViews = new MyGridTileView[gridSize, gridSize];
-			foreach(MyGridTileView g in _activeWorldTileCollection.GetAllTiles())
-			{
-				GameObject gO = Instantiate(_previewPrefab);
-				gO.GetComponent<MyLevelEditorSelectableTile>().Initialize(g, _tileSelectionContent);
-			}
+			//foreach(MyGridTileView g in MyGameState.Instance.LevelManager.ActiveTileAssetCollection.GetAllTiles())
+			//{
+			//	GameObject gO = Instantiate(_previewPrefab);
+			//	gO.GetComponent<MyLevelEditorSelectableTile>().Initialize(g, _tileSelectionContent);
+			//}
 		}
 
 		private void OnDestroy()
@@ -59,20 +48,24 @@ namespace Jstylezzz.LevelEditor
 
 		public void OnSaveClicked()
 		{
-			MyStorageManager.Instance.GetModule<MyLevelStorageModule>().DumpGridData(_gridTileViews.GetPrefabNames());
-			MyStorageManager.Instance.SaveModule<MyLevelStorageModule>();
+			if(!string.IsNullOrEmpty(MyGameState.Instance.LevelManager.ActiveLevelName))
+			{
+				MyGameState.Instance.LevelManager.SaveLevelData();
+			}
+			else
+			{
+				MyPopupManager.Instance.RequestGenericPopup("No Active level", "There is no level active that can be saved.", "Okay", MyPopupManager.Instance.CloseActiveGeneric);
+			}
 		}
 
 		public void OnLoadClicked()
 		{
-			string[,] prefabs = MyStorageManager.Instance.GetModule<MyLevelStorageModule>().PrefabNames;
-			for(int y = 0; y < prefabs.GetLength(1); y++)
-			{
-				for(int x = 0; x < prefabs.GetLength(0); x++)
-				{
-					SetTile(new Vector2Int(x, y), prefabs[x, y]);
-				}
-			}
+			MyPopupManager.Instance.RequestPopup(MyPopupManager.LevelEditorLevelSelectPopupKey);
+		}
+
+		public void OnNewLevelClicked()
+		{
+			MyPopupManager.Instance.RequestPopup(MyPopupManager.CreateNewLevelPopupKey);
 		}
 
 		private void SetTile(Vector2Int position, string prefabName)
@@ -82,26 +75,7 @@ namespace Jstylezzz.LevelEditor
 
 		private void SetTile(MyGridTile tile, string prefabName)
 		{
-			if(prefabName == null || !_activeWorldTileCollection.AssetDictionary.ContainsKey(prefabName))
-			{
-				_gridTileViews[tile.GridPosition.x, tile.GridPosition.y] = null;
-				tile.UnassignView();
-				return;
-			}
-
-			if(tile.HasView)
-			{
-				_gridTileViews[tile.GridPosition.x, tile.GridPosition.y] = null;
-				tile.UnassignView();
-			}
-
-			string activePrefabName = prefabName;
-
-			GameObject g = Instantiate(_activeWorldTileCollection.AssetDictionary[activePrefabName].gameObject);
-			g.name = $"Tile[{tile.GridPosition.x},{tile.GridPosition.y}]";
-			MyGridTileView view = g.GetComponent<MyGridTileView>();
-			_gridTileViews[tile.GridPosition.x, tile.GridPosition.y] = view;
-			tile.AssignView(view);
+			MyGameState.Instance.LevelManager.SetTile(prefabName, tile.GridPosition);
 		}
 
 		public void Update()

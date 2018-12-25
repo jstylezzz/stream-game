@@ -14,33 +14,40 @@ namespace Jstylezzz.Grid
 	/// </summary>
 	public class MyGridTile
 	{
-		public Vector2Int GridPosition { get { return _positionInGrid; } }
-		public bool HasView { get { return _tileView != null; } }
+		#region Properties
 
-		private Vector2Int _positionInGrid;
-		private MyGridTileView _tileView;
-		private MyGrid _grid;
+		public Vector2Int GridPosition { get; }
+		public bool HasView { get { return View != null; } }
+		public MyGridTileView View { get; private set; }
 
-		public MyGridTile(MyGrid grid, Vector2Int positionInGrid)
+		#endregion
+		#region Variables
+
+		#endregion
+
+		public MyGridTile(Vector2Int positionInGrid)
 		{
-			_grid = grid;
-			_positionInGrid = positionInGrid;
+			GridPosition = positionInGrid;
 		}
 
-		public void AssignView(MyGridTileView view)
+		#region Public Functions
+
+		public void AssignView(Transform gridParent, MyGridTileView view)
 		{
-			_tileView = view;
-			_tileView.transform.SetParent(_grid.transform, false);
-			_tileView.transform.localPosition = new Vector3(_positionInGrid.x * MyGrid.GridTileSize, _positionInGrid.y * MyGrid.GridTileSize, 0);
+			View = view;
+			View.transform.SetParent(gridParent, false);
+			View.transform.localPosition = new Vector3(GridPosition.x * MyGrid.GridTileSize, GridPosition.y * MyGrid.GridTileSize, 0);
 		}
 
 		public void UnassignView()
 		{
-			if(_tileView == null)
+			if(View == null)
 				return;
 
-			Object.Destroy(_tileView.gameObject);
-			_tileView = null;
+			Object.Destroy(View.gameObject);
+			View = null;
 		}
+
+		#endregion
 	}
 }
