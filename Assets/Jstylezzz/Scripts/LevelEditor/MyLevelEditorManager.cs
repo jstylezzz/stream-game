@@ -8,6 +8,7 @@
 using Jstylezzz.Grid;
 using Jstylezzz.Manager;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Jstylezzz.LevelEditor
 {
@@ -16,6 +17,9 @@ namespace Jstylezzz.LevelEditor
 	/// </summary>
 	public class MyLevelEditorManager : MonoBehaviour
 	{
+		private const float CameraMovementSpeed = 3.5f;
+		private const float CameraZoomSpeed = 0.9f;
+
 		[SerializeField]
 		private Transform _tileSelectionContent;
 
@@ -29,11 +33,11 @@ namespace Jstylezzz.LevelEditor
 		{
 			MyGameState.Instance.RegisterLevelManager(this);
 
-			//foreach(MyGridTileView g in MyGameState.Instance.LevelManager.ActiveTileAssetCollection.GetAllTiles())
-			//{
-			//	GameObject gO = Instantiate(_previewPrefab);
-			//	gO.GetComponent<MyLevelEditorSelectableTile>().Initialize(g, _tileSelectionContent);
-			//}
+			foreach(MyGridTileView g in MyGameState.Instance.AssetManager.DefaultSet.GetAllTiles())
+			{
+				GameObject gO = Instantiate(_previewPrefab);
+				gO.GetComponent<MyLevelEditorSelectableTile>().Initialize(g, _tileSelectionContent);
+			}
 		}
 
 		private void OnDestroy()
@@ -73,21 +77,68 @@ namespace Jstylezzz.LevelEditor
 			SetTile(MyGameState.Instance.ActiveGrid.GridTileFromGridPos(position), prefabName);
 		}
 
+		private void UnsetTile(MyGridTile tile)
+		{
+			MyGameState.Instance.LevelManager.UnsetTile(tile.GridPosition);
+		}
+
 		private void SetTile(MyGridTile tile, string prefabName)
 		{
 			MyGameState.Instance.LevelManager.SetTile(prefabName, tile.GridPosition);
 		}
 
-		public void Update()
+		private void PerformCameraManipulation()
 		{
-			if(_activeTileViewPrefab && Input.GetMouseButtonDown(0))
+			Vector2 movement = Vector2.zero;
+			if(Input.GetKey(KeyCode.A))
 			{
-				MyGridTile tile = MyGameState.Instance.ActiveGrid.GridTileFromMousePosition(Input.mousePosition);
-				if(tile != null)
+				movement.x -= CameraMovementSpeed;
+			}
+			else if(Input.GetKey(KeyCode.D))
+			{
+				movement.x += CameraMovementSpeed;
+			}
+
+			if(Input.GetKey(KeyCode.W))
+			{
+				movement.y += CameraMovementSpeed;
+			}
+			else if(Input.GetKey(KeyCode.S))
+			{
+				movement.y -= CameraMovementSpeed;
+			}
+
+			MyGameState.Instance.CameraOperator.RelativeMoveActiveCamera(movement * Time.deltaTime);
+			MyGameState.Instance.CameraOperator.RelativeZoomActiveCamera(Input.mouseScrollDelta.y);
+		}
+
+		private void PerformTilePlacementCheck()
+		{
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				if(Input.GetMouseButtonDown(1))
 				{
-					SetTile(tile, _activeTileViewPrefab.PrefabName);
+					MyGridTile tile = MyGameState.Instance.ActiveGrid.GridTileFromMousePosition(Input.mousePosition);
+					if(tile != null && tile.HasView)
+					{
+						UnsetTile(tile);
+					}
+				}
+				else if(_activeTileViewPrefab && Input.GetMouseButtonDown(0))
+				{
+					MyGridTile tile = MyGameState.Instance.ActiveGrid.GridTileFromMousePosition(Input.mousePosition);
+					if(tile != null && !tile.HasView)
+					{
+						SetTile(tile, _activeTileViewPrefab.PrefabName);
+					}
 				}
 			}
+		}
+
+		public void Update()
+		{
+			PerformTilePlacementCheck();
+			PerformCameraManipulation();
 		}
 	}
 }

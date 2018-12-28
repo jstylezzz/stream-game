@@ -17,12 +17,38 @@ namespace Jstylezzz.AssetCollections
 	[CreateAssetMenu(fileName = "DefaultTileCollection", menuName = "Jstylezzz/World/Tile Collection")]
 	public class MyWorldTileAssetCollection : ScriptableObject
 	{
+		#region Properties
+
 		public Dictionary<string, MyGridTileView> AssetDictionary => GetPrefabDictionary();
+
+		#endregion
+
+		#region Editor Variables
+
+		[SerializeField]
+		private string _collectionKey;
 
 		[SerializeField]
 		private MyGridTileView[] _tiles;
 
+		#endregion
+
+		#region Variables
+
 		private Dictionary<string, MyGridTileView> _prefabDictionary;
+
+		#endregion
+
+		#region Public Methods
+
+		public MyGridTileView[] GetAllTiles()
+		{
+			return _tiles;
+		}
+
+		#endregion
+
+		#region Private Methods
 
 		private Dictionary<string, MyGridTileView> GetPrefabDictionary()
 		{
@@ -38,9 +64,6 @@ namespace Jstylezzz.AssetCollections
 			return new Dictionary<string, MyGridTileView>(_prefabDictionary);
 		}
 
-		public MyGridTileView[] GetAllTiles()
-		{
-			return _tiles;
-		}
+		#endregion
 	}
 }

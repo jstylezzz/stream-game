@@ -19,7 +19,7 @@ namespace Jstylezzz.Grid
 	{
 		#region Consts
 
-		public const float GridTileSize = 0.32f;
+		public const float GridTileSize = 0.31f;
 
 		private const int LoadFractions = 2;
 
@@ -59,6 +59,11 @@ namespace Jstylezzz.Grid
 
 		public void Initialize(int uniformSize, Action onloadCallback = null)
 		{
+			if(uniformSize == 0)
+			{
+				return;
+			}
+
 			if(Initialized)
 			{
 				Deinitialize();

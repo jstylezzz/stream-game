@@ -26,6 +26,7 @@ namespace Jstylezzz.Manager
 		public MyLevelEditorManager LevelEditorManager { get; private set; }
 		public MyLevelManager LevelManager { get; }
 		public MyStorageManager StorageManager { get; }
+		public MyAssetCollectionManager AssetManager { get; private set; }
 
 		#endregion
 
@@ -42,6 +43,16 @@ namespace Jstylezzz.Manager
 		}
 
 		#region Register Methods
+
+		public void RegisterAssetManager(MyAssetCollectionManager assetManager)
+		{
+			if(AssetManager != null)
+			{
+				Debug.LogWarning("[MyGameState]: Camera operator already registered! Be sure to unregister before registering one again.");
+				return;
+			}
+			AssetManager = assetManager;
+		}
 
 		public void RegisterCameraOperator(MyCameraOperator oprt)
 		{

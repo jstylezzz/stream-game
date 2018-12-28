@@ -3,6 +3,8 @@ guid: 80c2328aded070b44b7b1dc967432711
 TextureImporter:
   fileIDToRecycleName:
     21300000: grass_corner_left
+    21300002: grass_01
+    21300004: sand_01
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -30,12 +32,12 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 0
     aniso: -1
     mipBias: -1
-    wrapU: 1
-    wrapV: 1
-    wrapW: -1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -105,6 +107,34 @@ TextureImporter:
         serializedVersion: 2
         x: 1
         y: 892
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: grass_01
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 859
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: sand_01
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 727
         width: 32
         height: 32
       alignment: 0

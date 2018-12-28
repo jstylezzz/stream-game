@@ -11,5 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c2c1482afb69584db66cb7cd25b2804, type: 3}
   m_Name: DefaultTileCollection
   m_EditorClassIdentifier: 
+  _collectionKey: DefaultTileset
   _tiles:
+  - {fileID: 114368672035659752, guid: c6122ee90a71bf247b76b91b790bb064, type: 2}
+  - {fileID: 114354194518043218, guid: a7980fd699e51ab4094272937fcd1d88, type: 2}
   - {fileID: 114672080069395318, guid: cb7b45521bc042542bd1dcff78e1ebbf, type: 2}

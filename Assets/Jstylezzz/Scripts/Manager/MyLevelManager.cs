@@ -21,7 +21,13 @@ namespace Jstylezzz.Manager
 		#region Properties
 
 		public string ActiveLevelName { get; private set; }
-		public MyWorldTileAssetCollection ActiveTileAssetCollection { get; private set; }
+		public MyWorldTileAssetCollection ActiveTileAssetCollection
+		{
+			get
+			{
+				return _gameState.AssetManager.DefaultSet;
+			}
+		}
 
 		#endregion
 
@@ -122,10 +128,16 @@ namespace Jstylezzz.Manager
 			MyGridTileView view = g.GetComponent<MyGridTileView>();
 			tile.AssignView(activeGrid.transform, view);
 		}
-		
-		public void AssignAssetCollection(MyWorldTileAssetCollection worldTileAssetCollection)
+
+		public void UnsetTile(Vector2Int gridPos)
 		{
-			ActiveTileAssetCollection = worldTileAssetCollection;
+			MyGrid activeGrid = MyGameState.Instance.ActiveGrid;
+			MyGridTile tile = activeGrid.Tiles[gridPos.x, gridPos.y];
+
+			if(tile.HasView)
+			{
+				tile.UnassignView();
+			}
 		}
 
 		#endregion
